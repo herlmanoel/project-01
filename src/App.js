@@ -1,68 +1,46 @@
-import logo from './logo.svg';
 import './App.css';
 import { Component } from 'react';
 
-// Componente de Classe Stateless
+// Componente de Classe
 class App extends Component {
 
-  //  recebe as props
-  constructor(props) {
-    // chamando o construtor da classe Component
-    super(props);
+  state = {
+    posts: [
+      {
+        id: 1,
+        title: 'O título 1',
+        body: 'O corpo 1'
+      },
+      {
+        id: 2,
+        title: 'O título 2',
+        body: 'O corpo 2'
+      },
+      {
+        id: 3,
+        title: 'O título 3',
+        body: 'O corpo 3'
+      },
+    ],
+  };
 
-    this.state = {
-      name: 'Herlmanoel',
-      counter: 0,
-    };
 
-    // não posso alterar o estate diretamente, ou seja,
-    // this.state.name = 'Herl'
-    // Para isso, utilizamos o setState
-
-    this.handlePClicks = this.handlePClicks.bind(this);
-  }
-
-  handlePClicks() {
-    // não consigo acessar o this, pois o React não faz o Bind do this
-    // Para ter acesso ao this: this.handlePClicks.bind(this)
-    this.setState({ name: 'Júnior' });
-    // quando o estado é alterado a função render é chamada novamente com o novo estado
-  }
-
-  // para não precisarmos fazer o .bind(this), utilizamos as ArrowFunctions
-  // AF não possuem this, ou seja, como ela não tem, procura no elemento pai que no caso é própria Classe
-  handleAClicks = (event) => {
-    event.preventDefault(); // não faz o que foi definido como padrão
-
-    const { counter } = this.state; 
-    this.setState({ name: 'Júnior', counter: counter+1 }); // setState sendo chamado o render é chamado
-    console.log(counter);
-  }
 
   render() {
     // const name = this.state.name;
-    const { name, counter } = this.state;
-
-    // isso que caracteriza o SinglePageAplication, saí de rotas, mas na mesma Página.
-
-    // class fields me permitem criar atributos sem precisar de um constructor e, com isso, eliminar o constructor
-
+    const { posts } = this.state;
+    console.log(posts)
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p onClick={() => this.handlePClicks()}>
-            {name} <br/> { counter }
-          </p>
-          <a
-            onClick={(event) => this.handleAClicks(event)}
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Este é o Link          </a>
-        </header>
+        {/* todo array em JS tem uma função '.map' disponível, ele retorna um novo array */}
+        {/* sempre que retornar vários elementos de um array no react temos que identificar-los, pois para otimizar a performance para saber exatamente qual elemento foi atualizado e ir direto nele */}
+        {/* com isso, utilizamos o key */}
+        {posts.map(post => (
+          <div key={post.id}>
+            <h1>{post.title}</h1>
+            <h2>{post.body}</h2>
+          </div>
+        ))}
       </div>
     );
   }
