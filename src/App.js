@@ -6,78 +6,57 @@ class App extends Component {
 
   state = {
     posts: [],
-    counter: 0,
   };
 
-  handleTimeout = () => {
-    const arrayPosts = [
-      {
-        id: 1,
-        title: 'O título 1',
-        body: 'O corpo 1'
-      },
-      {
-        id: 2,
-        title: 'O título 2',
-        body: 'O corpo 2'
-      },
-      {
-        id: 3,
-        title: 'O título 3',
-        body: 'O corpo 3'
-      },
-    ]
-    const { counter } = this.state;
-    // utilizamos ArrowFunctions para termos acesso ao this
-    // simulando o tempo de acesso a uma API
-    this.timeoutUpdate = setTimeout(() => {
-      this.setState({
-        posts: arrayPosts,
-        counter: counter + 1,
-      });
-    }, 1000); // 2000ms
-  }
 
   // componente montado na tela
   // não utilizamos ArrowFunctions 
   componentDidMount() {
-    console.log('Componente montado');
-    // faz uma requisição para uma api e seta o estado
-
-    // atualiza o estado, com isso chama o componentDidUpdate()
-    this.handleTimeout();
+    this.loadPosts();
   }
 
-  // componente alterado
-  componentDidUpdate() {
-    console.log('Componente alterado');
+  loadPosts = async () => {
+    // retorna uma promise que retorna uma resposta e, após isso, convertemos 
+    const postsResponse = fetch(`https://jsonplaceholder.typicode.com/posts`);
+    const photosResponse = fetch(`https://jsonplaceholder.typicode.com/photos`);
 
-    // fica se chamando
-    this.handleTimeout();
-  }
+    /*  
+      não colocamos o await, pois temos que fazer a requisição das Fotos
+      e, para fazer em paralelo, usamos o Promise.all([ ]);
+    */
 
-  // componente for desmontado
-  componentWillUnmount() {
-    clearTimeout(this.timeoutUpdate);
+    const [ posts, photos ] = await Promise.all([ postsResponse, photosResponse ]);
+
+    const postsJson = await posts.json();
+    const photosJson = await photos.json();
+
+    // unindo os arrays pelo menor
+    const postsAndPhotos = postsJson.map((post, index) => {
+      // o cover vem da foto
+      return { ...post, cover: photosJson[index].url }
+    });
+
+    this.setState({ posts: postsAndPhotos })
   }
 
   render() {
-    // const name = this.state.name;
-    const { posts, counter } = this.state;
-    console.log(posts)
+    const { posts } = this.state;
     return (
-      <div className="App">
-        {/* todo array em JS tem uma função '.map' disponível, ele retorna um novo array */}
-        {/* sempre que retornar vários elementos de um array no react temos que identificar-los, pois para otimizar a performance para saber exatamente qual elemento foi atualizado e ir direto nele */}
-        {/* com isso, utilizamos o key */}
-        <h1>{counter}</h1>
-        {posts.map(post => (
-          <div key={post.id}>
-            <h1>{post.title}</h1>
-            <h2>{post.body}</h2>
-          </div>
-        ))}
-      </div>
+      <section className="container">
+
+        <div className="posts">
+          {posts.map(post => (
+            <div className="post">
+              <img src={post.cover} alt={post.title} />
+              <div className="post-content" key={post.id}>
+                <h1> {post.title} </h1>
+                <h2> {post.body} </h2>
+              </div>
+            </div>
+          ))}
+        </div>
+
+      </section>
     );
   }
 }
