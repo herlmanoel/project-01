@@ -1,8 +1,13 @@
 import './App.css';
 import { Component } from 'react';
+import { PostCard } from './components/PostCard';
 
 // Componente de Classe
 class App extends Component {
+
+  /*
+    -> o estado pode apenas descer (ir para componentes filhos), mas
+  */
 
   state = {
     posts: [],
@@ -46,13 +51,7 @@ class App extends Component {
 
         <div className="posts">
           {posts.map(post => (
-            <div className="post">
-              <img src={post.cover} alt={post.title} />
-              <div className="post-content" key={post.id}>
-                <h1> {post.title} </h1>
-                <h2> {post.body} </h2>
-              </div>
-            </div>
+            <PostCard post={post} />
           ))}
         </div>
 
