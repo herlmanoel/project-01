@@ -1,6 +1,9 @@
-import './App.css';
 import { Component } from 'react';
-import { PostCard } from './components/PostCard';
+
+import './App.css';
+
+// import { PostCard } from './components/PostCard';
+import { Posts } from './components/Posts';
 import { loadPosts } from './utils/load-posts';
 
 // Componente de Classe
@@ -15,10 +18,13 @@ class App extends Component {
   };
 
 
-  // componente montado na tela
-  // não utilizamos ArrowFunctions 
-  componentDidMount() {
-    this.loadPosts();
+  /*
+    -> Montado na tela
+    -> Não utilizamos ArrowFunctions 
+    -> Pode ser async
+  */
+  async componentDidMount() {
+    await this.loadPosts();
   }
 
   loadPosts = async () => {
@@ -30,13 +36,7 @@ class App extends Component {
     const { posts } = this.state;
     return (
       <section className="container">
-
-        <div className="posts">
-          {posts.map(post => (
-            <PostCard post={post} />
-          ))}
-        </div>
-
+        <Posts posts={posts} />
       </section>
     );
   }
