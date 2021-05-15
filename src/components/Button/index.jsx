@@ -1,10 +1,15 @@
 import { Component } from "react";
 
+import './style.css';
 export class Button extends Component {
     render() {
-        const { text, onCLick } = this.props;
+        const { text, onCLick, disabled } = this.props;
         return (
-            <button onClick={onCLick}>
+            <button 
+                className="button" 
+                onClick={onCLick}
+                disabled={disabled}
+            >
                { text }
             </button>
         );

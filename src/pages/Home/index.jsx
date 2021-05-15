@@ -18,7 +18,7 @@ export default class Home extends Component {
     posts: [],
     allPosts: [],
     pageStart: 0,
-    postsPerPage: 2,
+    postsPerPage: 10,
   };
 
 
@@ -50,11 +50,11 @@ export default class Home extends Component {
 
   // carregará sempre mais dois Posts
   loadMorePosts = () => {
-    const { 
-      allPosts, 
+    const {
+      allPosts,
       posts,
-      pageStart, 
-      postsPerPage 
+      pageStart,
+      postsPerPage
     } = this.state;
 
     const nextPage = pageStart + postsPerPage;
@@ -65,7 +65,7 @@ export default class Home extends Component {
       -> Espalha um array
     */
 
-    posts.push( ...nextPosts );
+    posts.push(...nextPosts);
 
     this.setState({ posts: posts, pageStart: nextPage });
     // console.log( pageStart, postsPerPage, nextPage, nextPage + postsPerPage );
@@ -74,7 +74,9 @@ export default class Home extends Component {
   }
 
   render() {
-    const { posts } = this.state;
+    const { posts, pageStart, allPosts, postsPerPage } = this.state;
+    const noMorePosts = pageStart + postsPerPage >= allPosts.length;
+
     return (
       <section className="container">
         <Posts posts={posts} />
@@ -87,10 +89,13 @@ export default class Home extends Component {
               a propriedade para o component
         />
         */}
-        <Button
-          text="Carregar mais Posts"
-          onCLick={this.loadMorePosts}
-        />
+        <div className="container__button">
+          <Button
+            text="Carregar mais Posts"
+            onCLick={this.loadMorePosts}
+            disabled={noMorePosts}
+          />
+        </div>
       </section>
     );
   }
