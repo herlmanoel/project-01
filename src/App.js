@@ -1,6 +1,7 @@
 import './App.css';
 import { Component } from 'react';
 import { PostCard } from './components/PostCard';
+import { loadPosts } from './utils/load-posts';
 
 // Componente de Classe
 class App extends Component {
@@ -21,26 +22,7 @@ class App extends Component {
   }
 
   loadPosts = async () => {
-    // retorna uma promise que retorna uma resposta e, após isso, convertemos 
-    const postsResponse = fetch(`https://jsonplaceholder.typicode.com/posts`);
-    const photosResponse = fetch(`https://jsonplaceholder.typicode.com/photos`);
-
-    /*  
-      não colocamos o await, pois temos que fazer a requisição das Fotos
-      e, para fazer em paralelo, usamos o Promise.all([ ]);
-    */
-
-    const [ posts, photos ] = await Promise.all([ postsResponse, photosResponse ]);
-
-    const postsJson = await posts.json();
-    const photosJson = await photos.json();
-
-    // unindo os arrays pelo menor
-    const postsAndPhotos = postsJson.map((post, index) => {
-      // o cover vem da foto
-      return { ...post, cover: photosJson[index].url }
-    });
-
+    const postsAndPhotos = await loadPosts();
     this.setState({ posts: postsAndPhotos })
   }
 
