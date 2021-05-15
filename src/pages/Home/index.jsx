@@ -1,13 +1,13 @@
 import { Component } from 'react';
 
-import './App.css';
+import './style.css';
 
 // import { PostCard } from './components/PostCard';
-import { Posts } from './components/Posts';
-import { loadPosts } from './utils/load-posts';
+import { Posts } from '../../components/Posts';
+import { loadPosts } from '../../utils/load-posts';
 
 // Componente de Classe
-class App extends Component {
+export default class Home extends Component {
 
   /*
     -> o estado pode apenas descer (ir para componentes filhos), mas
@@ -42,4 +42,3 @@ class App extends Component {
   }
 }
 
-export default App;
