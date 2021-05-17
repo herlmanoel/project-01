@@ -6,6 +6,8 @@ import './style.css';
 import { Posts } from '../../components/Posts';
 import { loadPosts } from '../../utils/load-posts';
 import { Button } from '../../components/Button';
+import { Input } from '../../components/Input';
+
 
 // Componente de Classe
 export default class Home extends Component {
@@ -111,17 +113,15 @@ export default class Home extends Component {
             Boolean com (!!), se for x = '', é false. Se tem valor na String é true.
             !!x && y => se x for verdadeiro, retorne y. Senão, não faça nada 
         */}
-        {!!searchValue && (
-          <>
-            <h1>Search Value {searchValue} </h1> <br /> <br />
-          </>
-        )}
         
-        <input
-          onChange={this.handleChange}
-          value={searchValue}
-          type="search"
-        /> <br /> <br />
+        <div className="searchContainer">
+        {!!searchValue && (
+          <h1>Search Value {searchValue} </h1>
+        )}
+
+        <Input valueInput={searchValue} handleChange={this.handleChange} />
+        </div>
+
 
         {filteredPosts.length > 0 && (
           <Posts posts={filteredPosts} />
