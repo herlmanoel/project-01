@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 import './style.css';
 
@@ -9,152 +9,140 @@ import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 
 
-// Componente de Classe
-export default class Home extends Component {
+
+export const Home = () => {
+  /*
+    const arr = [0, 1, 2];
+    const [a, b, c] = arr;
+  */
+  const [posts, setPosts] = useState([]);
+  const [allPosts, setAllPosts] = useState([]);
+  const [pageStart, setPageStart] = useState(0);
+  const [postsPerPage] = useState(6);
+  const [searchValue, setSearchValue] = useState('');
+
+  const noMorePosts = pageStart + postsPerPage >= allPosts.length;
+
+  const filteredPosts = !!searchValue ?
+    allPosts.filter(post => {
+      return post.title.toLowerCase().includes(searchValue.toLowerCase());
+    })
+    : posts;
 
   /*
-    -> o estado pode apenas descer (ir para componentes filhos), mas
+    -> Esse useEffect tem uma dependência faltando, 
+    a handleLoadPosts que está sendo usada dentro do componente.
+    Entretanto, não posso colocar [ handleLoadPosts ], pois
+
+    sempre que o componente for renderizado é chamado o useEffect
+    => que chama a handleLoadPosts(); => chama useEffect => ...
+    
+    -> Criamos um loop
   */
 
-  state = {
-    posts: [],
-    allPosts: [],
-    pageStart: 0,
-    postsPerPage: 2,
-    searchValue: '',
-  };
 
-
-  /*
-    -> Montado na tela
-    -> Não utilizamos ArrowFunctions 
-    -> Pode ser async
-  */
-  async componentDidMount() {
-    await this.loadPosts();
-  }
-
-  loadPosts = async () => {
-    const { pageStart, postsPerPage } = this.state;
+  const handleLoadPosts = useCallback(async (pageStart, postsPerPage) => {
+    // const { pageStart, postsPerPage } = this.state;
 
     const postsAndPhotos = await loadPosts();
 
-    /*
-      -> devemos fazer um .slice() - fatiar - do JS
-        arr.slice([início[,fim]])
-        https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Array/slice
-    */
+    // this.setState({
+    //   posts: postsAndPhotos.slice(pageStart, postsPerPage),
+    //   allPosts: postsAndPhotos,
+    // });
 
-    this.setState({
-      posts: postsAndPhotos.slice(pageStart, postsPerPage),
-      allPosts: postsAndPhotos,
-    });
-  }
+    setPosts(postsAndPhotos.slice(pageStart, postsPerPage));
+    setAllPosts(postsAndPhotos);
+  }, []);
+
+  useEffect(() => {
+    handleLoadPosts(0, postsPerPage);
+  }, [ handleLoadPosts, postsPerPage ]);
 
   // carregará sempre mais dois Posts
-  loadMorePosts = () => {
-    const {
-      allPosts,
-      posts,
-      pageStart,
-      postsPerPage
-    } = this.state;
-
+  const loadMorePosts = () => {
+    // const {
+    //   allPosts,
+    //   posts,
+    //   pageStart,
+    //   postsPerPage
+    // } = this.state;
 
     const nextPage = pageStart + postsPerPage;
     const nextPosts = allPosts.slice(nextPage, (nextPage + postsPerPage));
 
-
-    /*
-      Spread Operator
-      -> Espalha um array
-    */
-
     posts.push(...nextPosts);
 
-    this.setState({ posts: posts, pageStart: nextPage });
+    // this.setState({ posts: posts, pageStart: nextPage });
+    setPosts(posts);
+    setPageStart(nextPage);
   }
 
-  handleChange = (event) => {
+  const handleChange = (event) => {
     const { value } = event.target;
 
-    this.setState({ searchValue: value });
+    // this.setState({ searchValue: value });
+    setSearchValue(value);
   }
 
-  render() {
-    const { posts, pageStart, allPosts, postsPerPage, searchValue } = this.state;
-    const noMorePosts = pageStart + postsPerPage >= allPosts.length;
 
-    /*
-      -> se tiver algo no searchValue, ...
-      -> verifica se possui algum post que o titulo inclui o searchValue
-      post.title.toLowerCase().includes(searchValue.toLowerCase())
-    */
-    const filteredPosts = !!searchValue ?
-      allPosts.filter(post => {
-        return post.title.toLowerCase().includes(searchValue.toLowerCase());
-      })
-      : posts;
+  return (
+    <section className="container">
+      {/* 
+        # input 
+          -> Temos o evento sintético onChange
+          -> Recebe uma função com o parâmetro do evento e, nele, temos as informações
+          -> coloca no estado e no value do input
 
-    return (
-      <section className="container">
-        {/* 
-          # input 
-            -> Temos o evento sintético onChange
-            -> Recebe uma função com o parâmetro do evento e, nele, temos as informações
-            -> coloca no estado e no value do input
+        # Avaliação de curto-circuito
+          https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Expressions_and_operators
+          -> expressões lógicas são avaliadas da esquerda para a direita
+          -> ( false && x ) é avaliado em curto-circuito como falso
+          -> ( true || x )  é avaliado em curto-circuito como verdadeiro
+          saber se existe alguma coisa no searchValue, para converter para
+          Boolean com (!!), se for x = '', é false. Se tem valor na String é true.
+          !!x && y => se x for verdadeiro, retorne y. Senão, não faça nada 
+      */}
 
-          # Avaliação de curto-circuito
-            https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Expressions_and_operators
-            -> expressões lógicas são avaliadas da esquerda para a direita
-            -> ( false && x ) é avaliado em curto-circuito como falso
-            -> ( true || x )  é avaliado em curto-circuito como verdadeiro
-            saber se existe alguma coisa no searchValue, para converter para
-            Boolean com (!!), se for x = '', é false. Se tem valor na String é true.
-            !!x && y => se x for verdadeiro, retorne y. Senão, não faça nada 
-        */}
-        
-        <div className="searchContainer">
+      <div className="searchContainer">
         {!!searchValue && (
           <h1>Search Value {searchValue} </h1>
         )}
 
-        <Input valueInput={searchValue} handleChange={this.handleChange} />
-        </div>
+        <Input valueInput={searchValue} handleChange={handleChange} />
+      </div>
 
 
-        {filteredPosts.length > 0 && (
-          <Posts posts={filteredPosts} />
+      {filteredPosts.length > 0 && (
+        <Posts posts={filteredPosts} />
+      )}
+
+      {filteredPosts.length === 0 && (
+        <h1>Não existem Posts.</h1>
+      )}
+
+
+
+      {/* 
+        -> Chamando um evento sintético de click 
+        -> Não funciona passar o onCLick só nesse component, precisamos pegar lá no comp e usar
+        
+        <Button onCLick={loadMorePosts} />
+          -> onCLick={loadMorePosts} não é evento, estamos passando 
+            a propriedade para o component
+      />
+      */}
+      <div className="container__button">
+        {/* se não tenha busca, exiba o botão */}
+        {!searchValue && (
+          <Button
+            text="Carregar mais Posts"
+            onCLick={loadMorePosts}
+            disabled={noMorePosts}
+          />
         )}
 
-        {filteredPosts.length === 0 && (
-          <h1>Não existem Posts.</h1>
-        )}
-
-
-
-        {/* 
-          -> Chamando um evento sintético de click 
-          -> Não funciona passar o onCLick só nesse component, precisamos pegar lá no comp e usar
-          
-          <Button onCLick={this.loadMorePosts} />
-            -> onCLick={this.loadMorePosts} não é evento, estamos passando 
-              a propriedade para o component
-        />
-        */}
-        <div className="container__button">
-          {/* se não tenha busca, exiba o botão */}
-          {!searchValue && (
-            <Button
-              text="Carregar mais Posts"
-              onCLick={this.loadMorePosts}
-              disabled={noMorePosts}
-            />
-          )}
-
-        </div>
-      </section>
-    );
-  }
+      </div>
+    </section>
+  );
 }
-
