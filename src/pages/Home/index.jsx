@@ -18,7 +18,8 @@ export default class Home extends Component {
     posts: [],
     allPosts: [],
     pageStart: 0,
-    postsPerPage: 10,
+    postsPerPage: 2,
+    searchValue: '',
   };
 
 
@@ -57,8 +58,10 @@ export default class Home extends Component {
       postsPerPage
     } = this.state;
 
+
     const nextPage = pageStart + postsPerPage;
     const nextPosts = allPosts.slice(nextPage, (nextPage + postsPerPage));
+
 
     /*
       Spread Operator
@@ -68,18 +71,68 @@ export default class Home extends Component {
     posts.push(...nextPosts);
 
     this.setState({ posts: posts, pageStart: nextPage });
-    // console.log( pageStart, postsPerPage, nextPage, nextPage + postsPerPage );
+  }
 
-    console.log("chamado");
+  handleChange = (event) => {
+    const { value } = event.target;
+
+    this.setState({ searchValue: value });
   }
 
   render() {
-    const { posts, pageStart, allPosts, postsPerPage } = this.state;
+    const { posts, pageStart, allPosts, postsPerPage, searchValue } = this.state;
     const noMorePosts = pageStart + postsPerPage >= allPosts.length;
+
+    /*
+      -> se tiver algo no searchValue, ...
+      -> verifica se possui algum post que o titulo inclui o searchValue
+      post.title.toLowerCase().includes(searchValue.toLowerCase())
+    */
+    const filteredPosts = !!searchValue ?
+      allPosts.filter(post => {
+        return post.title.toLowerCase().includes(searchValue.toLowerCase());
+      })
+      : posts;
 
     return (
       <section className="container">
-        <Posts posts={posts} />
+        {/* 
+          # input 
+            -> Temos o evento sintético onChange
+            -> Recebe uma função com o parâmetro do evento e, nele, temos as informações
+            -> coloca no estado e no value do input
+
+          # Avaliação de curto-circuito
+            https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Expressions_and_operators
+            -> expressões lógicas são avaliadas da esquerda para a direita
+            -> ( false && x ) é avaliado em curto-circuito como falso
+            -> ( true || x )  é avaliado em curto-circuito como verdadeiro
+            saber se existe alguma coisa no searchValue, para converter para
+            Boolean com (!!), se for x = '', é false. Se tem valor na String é true.
+            !!x && y => se x for verdadeiro, retorne y. Senão, não faça nada 
+        */}
+        {!!searchValue && (
+          <>
+            <h1>Search Value {searchValue} </h1> <br /> <br />
+          </>
+        )}
+        
+        <input
+          onChange={this.handleChange}
+          value={searchValue}
+          type="search"
+        /> <br /> <br />
+
+        {filteredPosts.length > 0 && (
+          <Posts posts={filteredPosts} />
+        )}
+
+        {filteredPosts.length === 0 && (
+          <h1>Não existem Posts.</h1>
+        )}
+
+
+
         {/* 
           -> Chamando um evento sintético de click 
           -> Não funciona passar o onCLick só nesse component, precisamos pegar lá no comp e usar
@@ -90,11 +143,15 @@ export default class Home extends Component {
         />
         */}
         <div className="container__button">
-          <Button
-            text="Carregar mais Posts"
-            onCLick={this.loadMorePosts}
-            disabled={noMorePosts}
-          />
+          {/* se não tenha busca, exiba o botão */}
+          {!searchValue && (
+            <Button
+              text="Carregar mais Posts"
+              onCLick={this.loadMorePosts}
+              disabled={noMorePosts}
+            />
+          )}
+
         </div>
       </section>
     );
