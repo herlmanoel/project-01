@@ -11,7 +11,6 @@ import { Input } from '../../components/Input';
 
 // Componente de Classe
 export default class Home extends Component {
-
   /*
     -> o estado pode apenas descer (ir para componentes filhos), mas
   */
@@ -23,7 +22,6 @@ export default class Home extends Component {
     postsPerPage: 2,
     searchValue: '',
   };
-
 
   /*
     -> Montado na tela
