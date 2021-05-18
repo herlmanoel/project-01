@@ -8,8 +8,6 @@ import { loadPosts } from '../../utils/load-posts';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 
-
-
 export const Home = () => {
   /*
     const arr = [0, 1, 2];
@@ -23,10 +21,10 @@ export const Home = () => {
 
   const noMorePosts = pageStart + postsPerPage >= allPosts.length;
 
-  const filteredPosts = !!searchValue ?
-    allPosts.filter(post => {
-      return post.title.toLowerCase().includes(searchValue.toLowerCase());
-    })
+  const filteredPosts = searchValue
+    ? allPosts.filter((post) => {
+        return post.title.toLowerCase().includes(searchValue.toLowerCase());
+      })
     : posts;
 
   /*
@@ -39,7 +37,6 @@ export const Home = () => {
     
     -> Criamos um loop
   */
-
 
   const handleLoadPosts = useCallback(async (pageStart, postsPerPage) => {
     // const { pageStart, postsPerPage } = this.state;
@@ -57,7 +54,7 @@ export const Home = () => {
 
   useEffect(() => {
     handleLoadPosts(0, postsPerPage);
-  }, [ handleLoadPosts, postsPerPage ]);
+  }, [handleLoadPosts, postsPerPage]);
 
   // carregará sempre mais dois Posts
   const loadMorePosts = () => {
@@ -69,22 +66,21 @@ export const Home = () => {
     // } = this.state;
 
     const nextPage = pageStart + postsPerPage;
-    const nextPosts = allPosts.slice(nextPage, (nextPage + postsPerPage));
+    const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage);
 
     posts.push(...nextPosts);
 
     // this.setState({ posts: posts, pageStart: nextPage });
     setPosts(posts);
     setPageStart(nextPage);
-  }
+  };
 
   const handleChange = (event) => {
     const { value } = event.target;
 
     // this.setState({ searchValue: value });
     setSearchValue(value);
-  }
-
+  };
 
   return (
     <section className="container">
@@ -105,23 +101,14 @@ export const Home = () => {
       */}
 
       <div className="searchContainer">
-        {!!searchValue && (
-          <h1>Search Value {searchValue} </h1>
-        )}
+        {!!searchValue && <h1>Search Value {searchValue} </h1>}
 
         <Input valueInput={searchValue} handleChange={handleChange} />
       </div>
 
+      {filteredPosts.length > 0 && <Posts posts={filteredPosts} />}
 
-      {filteredPosts.length > 0 && (
-        <Posts posts={filteredPosts} />
-      )}
-
-      {filteredPosts.length === 0 && (
-        <h1>Não existem Posts.</h1>
-      )}
-
-
+      {filteredPosts.length === 0 && <h1>Não existem Posts.</h1>}
 
       {/* 
         -> Chamando um evento sintético de click 
@@ -134,15 +121,8 @@ export const Home = () => {
       */}
       <div className="container__button">
         {/* se não tenha busca, exiba o botão */}
-        {!searchValue && (
-          <Button
-            text="Carregar mais Posts"
-            onCLick={loadMorePosts}
-            disabled={noMorePosts}
-          />
-        )}
-
+        {!searchValue && <Button text="Carregar mais Posts" onCLick={loadMorePosts} disabled={noMorePosts} />}
       </div>
     </section>
   );
-}
+};

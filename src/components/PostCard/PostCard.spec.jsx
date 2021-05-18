@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from '@testing-library/react';
 import { PostCard } from '.';
 import { postCardPropsMock } from './mock';
 
@@ -28,23 +28,22 @@ import { postCardPropsMock } from './mock';
 */
 
 describe('<PostCard />', () => {
-    it('should render PostCard correctly', () => {
+  it('should render PostCard correctly', () => {
+    render(<PostCard post={postCardPropsMock} />);
 
-        render(<PostCard post={postCardPropsMock} />);
+    const img = screen.getByRole('img');
+    const heading = screen.getByRole('heading', { name: 'title 1' });
+    const paragraph = screen.getByText('body 1');
 
-        const img = screen.getByRole('img');
-        const heading = screen.getByRole('heading', { name: 'title 1'});
-        const paragraph = screen.getByText('body 1');
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', postCardPropsMock.cover);
 
-        expect(img).toBeInTheDocument();
-        expect(img).toHaveAttribute('src', postCardPropsMock.cover);
-        
-        expect(heading).toBeInTheDocument();
-        expect(paragraph).toBeInTheDocument();
-    });
+    expect(heading).toBeInTheDocument();
+    expect(paragraph).toBeInTheDocument();
+  });
 
-    it('should match snapshot', () => {
-        const { container } = render(<PostCard post={postCardPropsMock} />);
-        expect(container.firstChild).toMatchSnapshot();
-    });
+  it('should match snapshot', () => {
+    const { container } = render(<PostCard post={postCardPropsMock} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 });

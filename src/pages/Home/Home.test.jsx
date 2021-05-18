@@ -1,4 +1,3 @@
-import { render, screen } from '@testing-library/react';
 /*
   -> it === jest
   -> Não vamos testar a Home, pois é melhor testar os comps
@@ -13,4 +12,3 @@ describe('<Home />', () => {
     expect(1).toBe(1);
   });
 });
-

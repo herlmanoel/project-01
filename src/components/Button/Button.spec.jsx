@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { Button } from "./index";
+import { fireEvent, render, screen } from '@testing-library/react';
+import { Button } from './index';
 
 /*
     Preciso testar o que eu quero que aconteça quando rederizar este componente
@@ -21,72 +21,71 @@ import { Button } from "./index";
 */
 
 describe('<Button />', () => {
-    it('should render the button with the test "Load more"', () => {
-        // renderiza
-        render(<Button text="Load more" />);
+  it('should render the button with the test "Load more"', () => {
+    // renderiza
+    render(<Button text="Load more" />);
 
-        /* 
+    /* 
             Espera que ocorra uma assertion (afirmação), que é expect(button).toBeInTheDocument();
             É mais comum em testes assíncronos
         */
-        expect.assertions(1);
+    expect.assertions(1);
 
-        // busca o botão com esse texto
-        const button = screen.getByRole('button', { name: /load more/i });
+    // busca o botão com esse texto
+    const button = screen.getByRole('button', { name: /load more/i });
 
-        // afirma que quer esse botão no documento
-        expect(button).toBeInTheDocument();
-    });
+    // afirma que quer esse botão no documento
+    expect(button).toBeInTheDocument();
+  });
 
-    // garantir que quando clica no botão essa função é chamada
-    it('should call function on button click', () => {
-        // cria uma função fictícia
-        const fn = jest.fn();
+  // garantir que quando clica no botão essa função é chamada
+  it('should call function on button click', () => {
+    // cria uma função fictícia
+    const fn = jest.fn();
 
+    // renderiza
+    render(<Button text="Load more" onCLick={fn} />);
 
-        // renderiza
-        render(<Button text="Load more" onCLick={fn} />);
+    // busca o botão com esse texto
+    const button = screen.getByRole('button', { name: /load more/i });
 
-        // busca o botão com esse texto
-        const button = screen.getByRole('button', { name: /load more/i });
+    // clica no botão
+    fireEvent.click(button);
 
-        // clica no botão
-        fireEvent.click(button);
-
-        /*
+    /*
             Há outra biblioteca userEvent
                 -> Nos permite fazer uma checagem mais natural
                 -> Neste caso, faz a mesma coisa do fireEvent
                     userEvent.click(button);
         */
 
-        // afirma que quer esse botão foi clicado uma vez
-        expect(fn).toHaveBeenCalledTimes(1);
-    });
+    // afirma que quer esse botão foi clicado uma vez
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
 
-    // verificar o disabled é true
-    it('should be disabled when disabled is true', () => {
-        // renderiza
-        render(<Button text="Load more" disabled={true} />);
+  // verificar o disabled é true
+  it('should be disabled when disabled is true', () => {
+    // renderiza
+    render(<Button text="Load more" disabled={true} />);
 
-        // busca o botão com esse texto
-        const button = screen.getByRole('button', { name: /load more/i });
+    // busca o botão com esse texto
+    const button = screen.getByRole('button', { name: /load more/i });
 
-        expect(button).toBeDisabled();
-    });
+    expect(button).toBeDisabled();
+  });
 
-    // verificar o disabled é false
-    it('should be disabled when disabled is false', () => {
-        // renderiza
-        render(<Button text="Load more" disabled={false} />);
+  // verificar o disabled é false
+  it('should be disabled when disabled is false', () => {
+    // renderiza
+    render(<Button text="Load more" disabled={false} />);
 
-        // busca o botão com esse texto
-        const button = screen.getByRole('button', { name: /load more/i });
+    // busca o botão com esse texto
+    const button = screen.getByRole('button', { name: /load more/i });
 
-        expect(button).toBeEnabled();
-    });
-    it('should match snapshot', () => {
-        const { container } = render(<Button text="Load more" disabled={true} />);
-        expect(container.firstChild).toMatchSnapshot();
-    });
+    expect(button).toBeEnabled();
+  });
+  it('should match snapshot', () => {
+    const { container } = render(<Button text="Load more" disabled={true} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 });
