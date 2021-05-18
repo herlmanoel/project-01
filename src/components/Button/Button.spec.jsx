@@ -85,4 +85,8 @@ describe('<Button />', () => {
 
         expect(button).toBeEnabled();
     });
+    it('should match snapshot', () => {
+        const { container } = render(<Button text="Load more" disabled={true} />);
+        expect(container.firstChild).toMatchSnapshot();
+    });
 });
