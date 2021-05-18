@@ -41,8 +41,27 @@ describe('<Posts />', () => {
             .toHaveLength(3);
         expect(screen.getAllByText(/body/i))
             .toHaveLength(3);
-        expect(screen.getByRole('img', { name: 'title 3'}))
+        expect(screen.getByRole('img', { name: 'title 3' }))
             .toHaveAttribute('src', 'img/img3.png')
+    });
+
+    // testando renderizar sem os posts
+    it('should not render posts', () => {
+        render(<Posts />);
+
+        expect(screen.queryAllByText(/body/i))
+            .toHaveLength(0);
+
+        /*
+            É a mesma coisa que:
+                expect(screen.queryAllByText(/body/i))
+                    .not.boBeInTheDocument();
+            Usamos o query poque sabemos que não existe na tela
+
+            Podemos utilizar o:
+                npm test -- --watchAll="false" --coverage
+                mostra os arquivos e o que falta testar.
+        */
     });
 
     it('should render posts', () => {
